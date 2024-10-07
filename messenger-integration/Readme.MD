@@ -107,3 +107,54 @@ Have fun!
 ### Simplifying PSID Handling
 
 There is a Facebook Messenger HACS integration, which can be used to associate names to the PSIDs, so that notify action calls (and automations) look nicer. Once the PSID/name pairs are defined, names can be used in actions. I won't go into details here, as the description of the integration is straightforward.
+
+### Sending images
+
+The official way to send an image is by sending an attachment. This is how it SHOULD work (for simplicity, showing as JSON):
+
+```json
+ {
+    "message": "attachment",
+    "target": "26428272146817880",
+    "data": {
+        "attachment": {
+            "type": "image",
+            "payload": {
+                "url": [url of image]
+            }
+        }
+    }
+}
+```
+
+There are three problems: 1) this doesn't work with the above new service (with PSID/name support), 2) the API is sassy and will reject images for various reasons (like not having mime type specified properly, or coming from an unknown server, etc.) and 3) serving a local file needs some workaround.
+
+I don't want to present examples for all the cases, just document how I did it, in node-red. The same can be done in an automation (e.g. see [this](https://community.home-assistant.io/t/facebook-messenger-no-longer-able-to-send-local-images/719956)), but I'm using node-red, so here is the code of a function node getting a camera image and sending it via Messenger:
+
+```javascript
+const imageResponse = await axios(msg.url, { responseType: 'arraybuffer' });
+
+const form = new FormData();
+form.append('recipient', `{ "id": "${msg.recipient}" }`);
+form.append('message', '{ "attachment": { "type": "image", "payload": {} } }');
+form.append(
+  'filedata',
+  Buffer.from(imageResponse.data, 'binary'),
+  `filename.${msg.extension ?? 'jpg'}`
+);
+
+const url = `https://graph.facebook.com/v2.6/me/messages?access_token=${msg.accessToken}`;
+try {
+  msg.payload = await axios.post(url, form, {
+    headers: {
+      ...form.getHeaders(),
+    },
+  });
+} catch (e) {
+  msg.payload = e;
+}
+
+return msg;
+```
+
+Use a camera or image entity to get a temporary image url for the above code: `msg.[camera/image].attributes.entity_picture`.
