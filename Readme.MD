@@ -4,7 +4,7 @@ These are some random useful things (guides, examples, config, code, etc.) that 
 
 - ["Időkép" weather integration](https://github.com/tolnai/home_assistant_idokep_scraper/): Use Hungarian "Időkép" weather service as weather data source (has a separate repository)
 - [Messenger integration](messenger-integration): Sending notifications to Facebook Messenger.
-- [Cover Slider card](https://github.com/tolnai/hacs_cover_slider)
+- [Cover Slider card](https://github.com/tolnai/hacs_cover_slider): Custom card using sliders to control covers
 
 (List is expected to grow in the future...)
 
