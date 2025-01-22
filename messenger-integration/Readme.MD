@@ -157,4 +157,25 @@ try {
 return msg;
 ```
 
+If you have problems with sending the image, not sending a proper mime type for the file is a typical problem. The mime type can be explicitly defined like this:
+
+```javascript
+form.append('filedata', Buffer.from(imageResponse.data, 'binary'), {
+  filename: `filename.${msg.extension ?? 'jpg'}`,
+  contentType: 'image/jpeg',
+});
+```
+
 Use a camera or image entity to get a temporary image url for the above code: `msg.[camera/image].attributes.entity_picture`.
+
+Messenger supports these attachment formats: `audio`, `file`, `image`, `template` and `video`.
+
+## Getting a long-lived token
+
+Your token might expire, resulting in errors sending messages/files. There is a way to get a long-lived page token.
+
+- Go to [my apps](https://developers.facebook.com/apps/)
+- Open your app, go to Settings, Basic, copy "app id", and "app secret"
+- Open [graph explorer](https://developers.facebook.com/tools/explorer/)
+- Send this request: `oauth/access_token?grant_type=fb_exchange_token&client_id={app-id}&client_secret={app-secret}&fb_exchange_token={your-access-token}` - you will get a long-lived user token in the response.
+- Send this request: `{app-scoped-user-id}/accounts?access_token={long-lived-user-token}` - you will get your long-lived page access token in the response.
