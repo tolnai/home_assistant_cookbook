@@ -179,3 +179,5 @@ Your token might expire, resulting in errors sending messages/files. There is a 
 - Open [graph explorer](https://developers.facebook.com/tools/explorer/)
 - Send this request: `oauth/access_token?grant_type=fb_exchange_token&client_id={app-id}&client_secret={app-secret}&fb_exchange_token={your-access-token}` - you will get a long-lived user token in the response.
 - Send this request: `{app-scoped-user-id}/accounts?access_token={long-lived-user-token}` - you will get your long-lived page access token in the response.
+
+To investigate a token's type and validity, use the [access token debugger](https://developers.facebook.com/tools/debug/accesstoken/).
